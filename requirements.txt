@@ -5,4 +5,4 @@ plotly
 scikit-learn
 openpyxl
 shap
-streamlit-shap
+matplotlib
