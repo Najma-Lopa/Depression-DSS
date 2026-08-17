@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
 import shap
-from streamlit_shap import st_shap
+import matplotlib.pyplot as plt
 
 # --- Page Configuration & Custom CSS ---
 st.set_page_config(page_title="Depression Diagnostic Dashboard", layout="wide", page_icon="🧠")
@@ -199,7 +199,6 @@ with col_results:
         prob_df = pd.DataFrame({'Condition': classes, 'Probability': probabilities})
         prob_df = prob_df.sort_values(by='Probability', ascending=False) 
         
-        # একদম ক্লিয়ার এবং ডিস্টিংক্ট কালার ম্যাপ 
         color_discrete_map = {
             "No Depression": "#28A745",       # Green
             "Mild Depression": "#FFC107",     # Yellow
@@ -240,31 +239,24 @@ with col_results:
 
         st.divider()
         
-        # --- SHAP Force Plot (Explainable AI) ---
-        st.write("#### 🧠 Explainable AI (SHAP Force Plot)")
-        st.write(f"Why did the model predict **{prediction_label}**? This interactive plot shows how specific features pushed the model's decision.")
+        # --- SHAP Explanation (Native Matplotlib Bar/Summary Plot) ---
+        st.write("#### 🧠 Explainable AI (SHAP Feature Contribution)")
+        st.write(f"Why did the model predict **{prediction_label}**? This plot shows the impact of individual features on the prediction.")
         
         with st.spinner("Generating SHAP Explanation..."):
             explainer = shap.TreeExplainer(model)
             shap_values = explainer.shap_values(input_df)
             
+            fig, ax = plt.subplots(figsize=(8, 5))
             if isinstance(shap_values, list):
-                shap_val_for_class = shap_values[prediction_encoded][0]
-                expected_val_for_class = explainer.expected_value[prediction_encoded]
+                # For multiclass, plot shap values for the predicted class
+                shap.summary_plot(shap_values[prediction_encoded], input_df, plot_type="bar", show=False)
             else:
-                shap_val_for_class = shap_values[0, :, prediction_encoded]
-                expected_val_for_class = explainer.expected_value[prediction_encoded]
-            
-            display_input_df = pd.DataFrame([user_input])[features]
-            
-            shap_fig = shap.force_plot(
-                expected_val_for_class, 
-                shap_val_for_class, 
-                display_input_df.iloc[0], 
-                feature_names=features,
-                matplotlib=False
-            )
-            st_shap(shap_fig, height=150)
+                shap.summary_plot(shap_values, input_df, plot_type="bar", show=False)
+                
+            plt.title(f"Feature Contributions for {prediction_label}", fontsize=14, fontweight='bold')
+            st.pyplot(fig)
+            plt.clf()
             
         st.divider()
         
@@ -288,7 +280,7 @@ with col_results:
         top_impact_df = impact_df.sort_values(by='Impact', ascending=False).head(6)
         
         fig_radar = go.Figure()
-        fig_radar.add_trace(go.Scatterpolar(
+        fig_radar.add_trade = fig_radar.add_trace(go.Scatterpolar(
             r=top_impact_df['Impact'].tolist() + [top_impact_df['Impact'].iloc[0]], 
             theta=top_impact_df['Feature'].tolist() + [top_impact_df['Feature'].iloc[0]],
             fill='toself',
