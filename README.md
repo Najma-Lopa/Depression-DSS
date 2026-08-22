@@ -19,7 +19,7 @@ A state-of-the-art web application built with **Streamlit** and **Machine Learni
   * Dynamically generated professional guidance and bullet-pointed coping strategies tailored to the specific severity level.
 * **Probability Distribution Chart:** 
   * Clear vertical probability distribution bar chart showing the percentage likelihood across all severity classes with distinct semantic color-coding.
-* **Explainable AI (XAI) - SHAP Integration:** 
+* **Explainable AI (XAI) - SHAP and LIME Integration:** 
   * Built-in SHAP feature contribution plots to explain *why* the model made a specific prediction, ensuring medical and academic transparency.
 * **Global Feature Impact Analysis:** 
   * Interactive radar chart displaying the most influential psychological and lifestyle factors contributing to the assessment.
