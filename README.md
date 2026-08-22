@@ -78,6 +78,10 @@ scikit-learn
 openpyxl
 shap
 matplotlib
+streamlit-shap
+xgboost
+catboost
+seaborn
 
 ```
 
